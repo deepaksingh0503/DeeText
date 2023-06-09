@@ -56,4 +56,7 @@ span {
   .textDetails {
     font-size: 0.8rem;
   }
+  .main-page-container {
+    min-height: 60vh;
+  }
 }
