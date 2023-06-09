@@ -1,0 +1,18 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+.Home-Page-container {
+  display: flex;
+  flex-direction: row;
+  flex: 1 2;
+  /* height: 100vh; */
+  width: 100ww;
+}
+
+@media only screen and (max-width: 900px) {
+  .Home-Page-container {
+    flex-direction: column-reverse;
+  }
+}
