@@ -59,6 +59,10 @@ export const SideBar = (props) => {
     ToastS("Cleared");
   };
   const ImageToText = async () => {
+    if (selectedImage === null) {
+      ToastE("Please choose a image!!");
+      return;
+    }
     var filePath = selectedImage.name;
 
     // Allowing file type
@@ -70,10 +74,7 @@ export const SideBar = (props) => {
       return;
     }
 
-    if (selectedImage === null) {
-      ToastE("Please choose a image!!");
-      return;
-    }
+   
     
     ToastS("Loading..........");
     const worker = await createWorker({
