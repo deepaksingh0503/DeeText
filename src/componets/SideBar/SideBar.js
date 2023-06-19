@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaRegCopy } from "react-icons/fa";
 import { Button } from "../Button/Button";
+import { createWorker } from "tesseract.js";
 import "./sidebar.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,9 +10,20 @@ var redoArr = [];
 export const SideBar = (props) => {
   var text = props.data.text;
   var settext = props.data.settext;
-
+  const [selectedImage, setSelectedImage] = useState(null);
   const ToastS = (text) => {
     toast.success(text, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+  const ToastE = (text) => {
+    toast.error(text, {
       position: "top-right",
       autoClose: 5000,
       hideProgressBar: false,
@@ -48,6 +60,41 @@ export const SideBar = (props) => {
     let result = "";
     settext(result);
     ToastS("Cleared");
+  };
+  const ImageToText = async () => {
+    var filePath = selectedImage.name;
+
+    // Allowing file type
+    var allowedExtensions = /(\.jpg|\.bmp |\.png|\.pbm)$/i;
+
+    if (!allowedExtensions.exec(filePath)) {
+      ToastE("Please Enter a valid jpg or png file.");
+
+      return;
+    }
+
+    if (selectedImage === null) {
+      ToastE("Please choose a image!!");
+      return;
+    }
+    
+    ToastS("Loading..........");
+    const worker = await createWorker({
+      logger: (m) => console.log(m),
+    });
+
+    (async () => {
+      await worker.loadLanguage("eng");
+      await worker.initialize("eng");
+      const {
+        data: { text },
+      } = await worker.recognize(selectedImage);
+      settext(text);
+      console.log(text);
+      await worker.terminate();
+      ToastS("Converted to text!");
+    })();
+
   };
   const RemoveExtraSpace = () => {
     undoArr.push(text);
@@ -98,7 +145,7 @@ export const SideBar = (props) => {
   };
 
   const Undo = () => {
-    if (undoArr.length == 0) {
+    if (undoArr.length === 0) {
       toast.warn("Cannot Undo", {
         position: "top-right",
         autoClose: 5000,
@@ -118,7 +165,7 @@ export const SideBar = (props) => {
     }
   };
   const Redo = () => {
-    if (redoArr.length == 0) {
+    if (redoArr.length === 0) {
       toast.warn("Cannot Redo", {
         position: "top-right",
         autoClose: 5000,
@@ -157,11 +204,26 @@ export const SideBar = (props) => {
 
           <Button text='Convert to UpperCase' fun={ToUpperCase} />
           <Button text='Convert to LowerCase' fun={ToLowerCase} />
-          <Button text='Clear Text' fun={ClearText} />
+          <div className='group'>
+            <Button text='Clear Text' fun={ClearText} />
+            <Button text='Read Aloud' fun={SpeakLoud} />
+          </div>
           <Button text='Remove Extra Spaces' fun={RemoveExtraSpace} />
-          <Button text='Read Aloud' fun={SpeakLoud} />
+          <div className='text_to_text_container'>
+            <Button text='Image to text' fun={ImageToText} />
+            <div className='Imginput'>
+              <input
+                type='file'
+                name='myImage'
+                onChange={(event) => {
+                  console.log(event.target.files[0]);
+                  setSelectedImage(event.target.files[0]);
+                }}
+              />
+            </div>
+          </div>
           <Button text='Remove trailing space' fun={removeSpace} />
-          <div className="group">
+          <div className='group'>
             <Button text='Undo' fun={Undo} />
             <Button text='Redo' fun={Redo} />
           </div>
