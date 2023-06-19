@@ -38,7 +38,6 @@ export const SideBar = (props) => {
     let result = text.toUpperCase();
     undoArr.push(text);
     redoArr = [];
-    console.log(undoArr);
 
     settext(result);
     ToastS("Converted To UpperCase");
@@ -47,7 +46,6 @@ export const SideBar = (props) => {
     let result = text.toLowerCase();
     undoArr.push(text);
     redoArr = [];
-    console.log(undoArr);
     settext(result);
 
     ToastS("Converted To LowerCase");
@@ -55,7 +53,6 @@ export const SideBar = (props) => {
   const ClearText = () => {
     undoArr.push(text);
     redoArr = [];
-    console.log(undoArr);
 
     let result = "";
     settext(result);
@@ -90,7 +87,6 @@ export const SideBar = (props) => {
         data: { text },
       } = await worker.recognize(selectedImage);
       settext(text);
-      console.log(text);
       await worker.terminate();
       ToastS("Converted to text!");
     })();
@@ -159,7 +155,6 @@ export const SideBar = (props) => {
       var result = undoArr.pop();
 
       redoArr.push(result);
-      console.log(redoArr);
       settext(result);
       ToastS("Undo!");
     }
@@ -216,7 +211,6 @@ export const SideBar = (props) => {
                 type='file'
                 name='myImage'
                 onChange={(event) => {
-                  console.log(event.target.files[0]);
                   setSelectedImage(event.target.files[0]);
                 }}
               />
